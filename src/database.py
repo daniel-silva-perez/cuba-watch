@@ -291,7 +291,7 @@ _MILITARY_BASES = [
     {
         "name": "Guantanamo Bay Naval Station (GITMO)",
         "lat": 19.9045, "lon": -75.1146, "country": "US", "type": "naval",
-        "description": "US Naval Station — leased territory, distinct jurisdiction from Cuba",
+        "description": "US Naval Station — leased territory, forward staging base for Caribbean operations",
     },
     {
         "name": "Camagüey Military Airfield",
@@ -312,6 +312,69 @@ _MILITARY_BASES = [
         "name": "Santiago de Cuba Air Base",
         "lat": 19.9698, "lon": -75.8454, "country": "CU", "type": "airbase",
         "description": "Antonio Maceo Airport — dual-use military/civil installation, eastern Cuba",
+    },
+    # Puerto Rico
+    {
+        "name": "Roosevelt Roads Naval Station",
+        "lat": 18.2370, "lon": -65.6238, "country": "US", "type": "naval",
+        "description": "Former US Navy base — still hosts Coast Guard, Customs, and reserve units",
+    },
+    {
+        "name": "Muñiz Air National Guard Base",
+        "lat": 18.4394, "lon": -66.0026, "country": "US", "type": "airbase",
+        "description": "Puerto Rico Air National Guard — 156th Airlift Wing (C-130 Hercules)",
+    },
+    {
+        "name": "Ramey Air Force Base (Coast Guard)",
+        "lat": 18.4948, "lon": -67.1311, "country": "US", "type": "airbase",
+        "description": "US Coast Guard Air Station Borinquen — HC-130J and MH-60T operations",
+    },
+    {
+        "name": "Fort Buchanan",
+        "lat": 18.4057, "lon": -66.1547, "country": "US", "type": "army",
+        "description": "US Army installation near San Juan — logistical hub for Caribbean operations",
+    },
+    # Florida / Southeast US
+    {
+        "name": "Naval Air Station Key West",
+        "lat": 24.5757, "lon": -81.6886, "country": "US", "type": "naval",
+        "description": "Premier training facility for tactical aviation — 90 miles from Cuba",
+    },
+    {
+        "name": "Homestead Air Reserve Base",
+        "lat": 25.4882, "lon": -80.3836, "country": "US", "type": "airbase",
+        "description": "USAF Reserve base — 30 miles from Miami, rapid response to Caribbean",
+    },
+    {
+        "name": "MacDill Air Force Base",
+        "lat": 27.8494, "lon": -82.5007, "country": "US", "type": "airbase",
+        "description": "USCENTCOM & USSOCOM headquarters — strategic command for Middle East/Caribbean",
+    },
+    {
+        "name": "Naval Station Mayport",
+        "lat": 30.3920, "lon": -81.4170, "country": "US", "type": "naval",
+        "description": "Major US Navy surface fleet base — carrier-capable port",
+    },
+    {
+        "name": "Naval Air Station Jacksonville",
+        "lat": 30.2358, "lon": -81.6803, "country": "US", "type": "naval",
+        "description": "US Navy maritime patrol base — P-8A Poseidon anti-submarine warfare",
+    },
+    {
+        "name": "Patrick Space Force Base",
+        "lat": 28.2344, "lon": -80.6108, "country": "US", "type": "space",
+        "description": "USSF base — Eastern Range launch support, space domain awareness",
+    },
+    # Other Caribbean
+    {
+        "name": "HMAS Caguas (Jamaica Defence Force)",
+        "lat": 17.9712, "lon": -76.7926, "country": "JM", "type": "naval",
+        "description": "Jamaica Coast Guard base — western Caribbean maritime security",
+    },
+    {
+        "name": "Grand Bahama Shipyard (Freeport)",
+        "lat": 26.5333, "lon": -78.7000, "country": "BS", "type": "naval",
+        "description": "Strategic drydock facility — can accommodate large naval vessels",
     },
 ]
 
@@ -371,19 +434,19 @@ def _seed_static_data():
     conn = get_conn()
     c = conn.cursor()
 
-    if c.execute("SELECT COUNT(*) FROM military_bases").fetchone()[0] == 0:
-        for b in _MILITARY_BASES:
-            c.execute(
-                "INSERT INTO military_bases (name, lat, lon, country, type, description) VALUES (?, ?, ?, ?, ?, ?)",
-                (b["name"], b["lat"], b["lon"], b["country"], b["type"], b["description"]),
-            )
+    # Insert new bases, ignore duplicates
+    for b in _MILITARY_BASES:
+        c.execute(
+            "INSERT OR IGNORE INTO military_bases (name, lat, lon, country, type, description) VALUES (?, ?, ?, ?, ?, ?)",
+            (b["name"], b["lat"], b["lon"], b["country"], b["type"], b["description"]),
+        )
 
-    if c.execute("SELECT COUNT(*) FROM strategic_assets").fetchone()[0] == 0:
-        for a in _STRATEGIC_ASSETS:
-            c.execute(
-                "INSERT INTO strategic_assets (name, lat, lon, type, description, importance) VALUES (?, ?, ?, ?, ?, ?)",
-                (a["name"], a["lat"], a["lon"], a["type"], a["description"], a["importance"]),
-            )
+    # Insert new assets, ignore duplicates
+    for a in _STRATEGIC_ASSETS:
+        c.execute(
+            "INSERT OR IGNORE INTO strategic_assets (name, lat, lon, type, description, importance) VALUES (?, ?, ?, ?, ?, ?)",
+            (a["name"], a["lat"], a["lon"], a["type"], a["description"], a["importance"]),
+        )
 
     conn.commit()
     conn.close()

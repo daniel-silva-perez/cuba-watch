@@ -45,15 +45,9 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
 }).addTo(map);
 
-// Cuba outline highlight - tactical style
-const cubaBounds = L.latLngBounds([[19.8, -85.0], [23.3, -74.0]]);
-L.rectangle(cubaBounds, { 
-  color: "#00ff41", 
-  weight: 1, 
-  fill: false, 
-  dashArray: "4,4",
-  opacity: 0.5
-}).addTo(map);
+// Tactical theater bounds - expanded to include PR and US bases
+const theaterBounds = L.latLngBounds([[17.0, -88.0], [28.0, -68.0]]);
+map.fitBounds(theaterBounds);
 
 const flightLayer = L.layerGroup().addTo(map);
 const shipLayer = L.layerGroup().addTo(map);
@@ -85,33 +79,108 @@ function glyphIcon(html, size = 18) {
   });
 }
 
-// Terminal-style icons
-const planeIcon = L.divIcon({
-  className: "plane-icon",
-  html: '<div style="color:#00ffff; font-size:14px; text-shadow:0 0 6px #00ffff;">▲</div>',
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
-const shipIcon = L.divIcon({
-  className: "ship-icon",
-  html: '<div style="color:#00ff41; font-size:12px; text-shadow:0 0 6px #00ff41;">◆</div>',
-  iconSize: [12, 12],
-  iconAnchor: [6, 6],
-});
+// Tactical SVG Icons
+function svgIcon(svgContent, size = 24, color = '#00ff41') {
+  return L.divIcon({
+    className: 'tactical-icon',
+    html: `<div style="width:${size}px;height:${size}px;filter:drop-shadow(0 0 3px ${color});">${svgContent}</div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2]
+  });
+}
 
-const baseIconCuba = glyphIcon('<span style="color:#ff3333; font-size:16px; text-shadow:0 0 6px #ff3333;">■</span>');
-const baseIconUS   = glyphIcon('<span style="color:#00ffff; font-size:16px; text-shadow:0 0 6px #00ffff;">■</span>');
-const movementIcon = glyphIcon('<span style="color:#ffb000; font-size:14px; text-shadow:0 0 6px #ffb000;">●</span>');
+const planeSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#00ffff" stroke="#00ffff" stroke-width="0.5"/>
+</svg>`;
+
+const fighterSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 12l-6-3-3-7-2 7-6 2 6 2 2 7 3-7 6-3z" fill="#00ffff" stroke="#00ffff" stroke-width="0.5"/>
+  <path d="M2 12h4" stroke="#00ffff" stroke-width="1.5"/>
+</svg>`;
+
+const shipSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 21h20v-2l-3-8h-2V7h-3V3H9v4H6v4H4l-3 8v2z" fill="#00ff41" stroke="#00ff41" stroke-width="0.5"/>
+  <path d="M9 3v4M15 3v4" stroke="#00ff41" stroke-width="0.5"/>
+</svg>`;
+
+const warshipSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1 20h22v-2l-4-10h-2V6h-3V3h-4v3H7v2H5L1 18v2z" fill="#00ff41" stroke="#00ff41" stroke-width="0.5"/>
+  <path d="M7 6h10M9 3v3M15 3v3" stroke="#00ff41" stroke-width="0.5"/>
+  <circle cx="12" cy="14" r="2" fill="#000" stroke="#00ff41" stroke-width="0.5"/>
+</svg>`;
+
+const baseCubaSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2L2 22h20L12 2z" fill="#ff3333" stroke="#ff3333" stroke-width="0.5"/>
+  <text x="12" y="17" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">CU</text>
+</svg>`;
+
+const baseUSSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2L2 22h20L12 2z" fill="#00ffff" stroke="#00ffff" stroke-width="0.5"/>
+  <text x="12" y="17" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">US</text>
+</svg>`;
+
+const baseNATOSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2L2 22h20L12 2z" fill="#ffb000" stroke="#ffb000" stroke-width="0.5"/>
+  <text x="12" y="17" text-anchor="middle" fill="#000" font-size="7" font-weight="bold">NATO</text>
+</svg>`;
+
+const movementSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="10" fill="none" stroke="#ffb000" stroke-width="2" stroke-dasharray="4 2"/>
+  <circle cx="12" cy="12" r="4" fill="#ffb000"/>
+  <circle cx="12" cy="12" r="2" fill="#000"/>
+</svg>`;
+
+const powerSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#ffff00" stroke="#ffff00" stroke-width="0.5"/>
+</svg>`;
+
+const refinerySvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="10" width="16" height="12" fill="#ff6600" stroke="#ff6600" stroke-width="0.5"/>
+  <rect x="7" y="6" width="3" height="4" fill="#ff6600" stroke="#ff6600" stroke-width="0.5"/>
+  <rect x="14" y="4" width="3" height="6" fill="#ff6600" stroke="#ff6600" stroke-width="0.5"/>
+</svg>`;
+
+const miningSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M4 20h16l-4-8-4 4-4-4-4 8z" fill="#888888" stroke="#888888" stroke-width="0.5"/>
+  <path d="M8 12l4-6 4 6" fill="none" stroke="#888888" stroke-width="0.5"/>
+</svg>`;
+
+const portSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2C8 2 5 5 5 9c0 3 2 5 4 6v5h6v-5c2-1 4-3 4-6 0-4-3-7-7-7z" fill="#00ffff" stroke="#00ffff" stroke-width="0.5"/>
+  <path d="M9 20h6v2H9z" fill="#00ffff"/>
+</svg>`;
+
+const sigintSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="none" stroke="#ff00ff" stroke-width="1.5"/>
+  <circle cx="12" cy="12" r="3" fill="#ff00ff"/>
+  <path d="M12 5v3M12 16v3M5 12h3M16 12h3" stroke="#ff00ff" stroke-width="0.5"/>
+</svg>`;
+
+const defaultAssetSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="12,2 15,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 9,9" fill="#00ff41" stroke="#00ff41" stroke-width="0.5"/>
+</svg>`;
+
+// Create icon instances
+const planeIcon = svgIcon(planeSvg, 20, '#00ffff');
+const fighterIcon = svgIcon(fighterSvg, 20, '#00ffff');
+const shipIcon = svgIcon(shipSvg, 18, '#00ff41');
+const warshipIcon = svgIcon(warshipSvg, 18, '#00ff41');
+
+const baseIconCuba = svgIcon(baseCubaSvg, 24, '#ff3333');
+const baseIconUS = svgIcon(baseUSSvg, 24, '#00ffff');
+const baseIconNATO = svgIcon(baseNATOSvg, 24, '#ffb000');
+const movementIcon = svgIcon(movementSvg, 22, '#ffb000');
 
 const assetIcons = {
-  power_plant: glyphIcon('<span style="color:#ffff00; font-size:14px; text-shadow:0 0 6px #ffff00;">⚡</span>'),
-  refinery:    glyphIcon('<span style="color:#ff6600; font-size:14px; text-shadow:0 0 6px #ff6600;">▣</span>'),
-  oil_field:   glyphIcon('<span style="color:#ff6600; font-size:14px; text-shadow:0 0 6px #ff6600;">▣</span>'),
-  mining:      glyphIcon('<span style="color:#888888; font-size:14px; text-shadow:0 0 6px #888888;">▪</span>'),
-  port:        glyphIcon('<span style="color:#00ffff; font-size:14px; text-shadow:0 0 6px #00ffff;">⚓</span>'),
-  sigint:      glyphIcon('<span style="color:#ff00ff; font-size:14px; text-shadow:0 0 6px #ff00ff;">◉</span>'),
+  power_plant: svgIcon(powerSvg, 18, '#ffff00'),
+  refinery: svgIcon(refinerySvg, 18, '#ff6600'),
+  oil_field: svgIcon(refinerySvg, 18, '#ff6600'),
+  mining: svgIcon(miningSvg, 18, '#888888'),
+  port: svgIcon(portSvg, 18, '#00ffff'),
+  sigint: svgIcon(sigintSvg, 18, '#ff00ff'),
 };
-const assetIconDefault = glyphIcon('<span style="color:#00ff41; font-size:14px; text-shadow:0 0 6px #00ff41;">★</span>');
+const assetIconDefault = svgIcon(defaultAssetSvg, 18, '#00ff41');
 
 async function fetchJSON(url) {
   const res = await fetch(url);
@@ -291,7 +360,7 @@ async function loadMilitaryBases() {
     basesLayer.clearLayers();
     (res.data || []).forEach(b => {
       if (b.lat == null || b.lon == null) return;
-      const icon = b.country === "US" ? baseIconUS : baseIconCuba;
+      const icon = b.country === "US" ? baseIconUS : b.country === "JM" || b.country === "BS" ? baseIconNATO : baseIconCuba;
       const m = L.marker([b.lat, b.lon], { icon });
       m.bindPopup(
         `<div class="flight-popup">
