@@ -1,4 +1,36 @@
-// Cuba Situation Monitor — frontend
+// [CLASSIFIED] CUBA WATCH — INTELLIGENCE TERMINAL
+// CLEARANCE LEVEL 5 REQUIRED
+
+console.log('%c[TOP SECRET] CUBA WATCH INTELLIGENCE SYSTEM', 'color: #00ff41; font-size: 16px; font-weight: bold;');
+console.log('%c> Initializing secure connection...', 'color: #008f11;');
+console.log('%c> Authentication: BIOMETRIC VERIFIED', 'color: #00ff41;');
+console.log('%c> Access Level: 5 [MAXIMUM]', 'color: #ff3333; font-weight: bold;');
+
+// Generate random session ID
+const sessionId = 'NRO-' + Math.floor(10000 + Math.random() * 90000) + '-CUBA';
+document.getElementById('session-id').textContent = sessionId;
+
+// Classification clock
+function updateClock() {
+  const now = new Date();
+  const iso = now.toISOString().replace('T', ' ').slice(0, 19);
+  const el = document.getElementById('classification-clock');
+  if (el) el.textContent = iso + ' UTC';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Map cursor coordinates
+function updateCoords(e) {
+  const el = document.getElementById('cursor-coords');
+  if (el && e.latlng) {
+    const lat = e.latlng.lat.toFixed(4);
+    const lon = e.latlng.lng.toFixed(4);
+    const ns = lat >= 0 ? 'N' : 'S';
+    const ew = lon >= 0 ? 'E' : 'W';
+    el.textContent = `${Math.abs(lat)}°${ns} ${Math.abs(lon)}°${ew}`;
+  }
+}
 
 const map = L.map("map", {
   center: [21.8, -79.5],
@@ -7,13 +39,21 @@ const map = L.map("map", {
   attributionControl: false,
 });
 
+map.on('mousemove', updateCoords);
+
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
 }).addTo(map);
 
-// Cuba outline highlight
+// Cuba outline highlight - tactical style
 const cubaBounds = L.latLngBounds([[19.8, -85.0], [23.3, -74.0]]);
-L.rectangle(cubaBounds, { color: "#58a6ff", weight: 1, fill: false, dashArray: "4,4" }).addTo(map);
+L.rectangle(cubaBounds, { 
+  color: "#00ff41", 
+  weight: 1, 
+  fill: false, 
+  dashArray: "4,4",
+  opacity: 0.5
+}).addTo(map);
 
 const flightLayer = L.layerGroup().addTo(map);
 const shipLayer = L.layerGroup().addTo(map);
@@ -45,32 +85,33 @@ function glyphIcon(html, size = 18) {
   });
 }
 
+// Terminal-style icons
 const planeIcon = L.divIcon({
   className: "plane-icon",
-  html: '<div style="color:#58a6ff; font-size:16px; text-shadow:0 0 4px #000;">✈</div>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-});
-const shipIcon = L.divIcon({
-  className: "ship-icon",
-  html: '<div style="color:#d29922; font-size:14px; text-shadow:0 0 4px #000;">⛴</div>',
+  html: '<div style="color:#00ffff; font-size:14px; text-shadow:0 0 6px #00ffff;">▲</div>',
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 });
+const shipIcon = L.divIcon({
+  className: "ship-icon",
+  html: '<div style="color:#00ff41; font-size:12px; text-shadow:0 0 6px #00ff41;">◆</div>',
+  iconSize: [12, 12],
+  iconAnchor: [6, 6],
+});
 
-const baseIconCuba = glyphIcon('<span style="color:#f85149; font-size:18px; text-shadow:0 0 4px #000;">🛡</span>');
-const baseIconUS   = glyphIcon('<span style="color:#58a6ff; font-size:18px; text-shadow:0 0 4px #000;">🛡</span>');
-const movementIcon = glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🚩</span>');
+const baseIconCuba = glyphIcon('<span style="color:#ff3333; font-size:16px; text-shadow:0 0 6px #ff3333;">■</span>');
+const baseIconUS   = glyphIcon('<span style="color:#00ffff; font-size:16px; text-shadow:0 0 6px #00ffff;">■</span>');
+const movementIcon = glyphIcon('<span style="color:#ffb000; font-size:14px; text-shadow:0 0 6px #ffb000;">●</span>');
 
 const assetIcons = {
-  power_plant: glyphIcon('<span style="color:#d29922; font-size:16px; text-shadow:0 0 4px #000;">⚡</span>'),
-  refinery:    glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🛢</span>'),
-  oil_field:   glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🛢</span>'),
-  mining:      glyphIcon('<span style="color:#8b949e; font-size:16px; text-shadow:0 0 4px #000;">⛏</span>'),
-  port:        glyphIcon('<span style="color:#58a6ff; font-size:16px; text-shadow:0 0 4px #000;">⚓</span>'),
-  sigint:      glyphIcon('<span style="color:#a371f7; font-size:16px; text-shadow:0 0 4px #000;">📡</span>'),
+  power_plant: glyphIcon('<span style="color:#ffff00; font-size:14px; text-shadow:0 0 6px #ffff00;">⚡</span>'),
+  refinery:    glyphIcon('<span style="color:#ff6600; font-size:14px; text-shadow:0 0 6px #ff6600;">▣</span>'),
+  oil_field:   glyphIcon('<span style="color:#ff6600; font-size:14px; text-shadow:0 0 6px #ff6600;">▣</span>'),
+  mining:      glyphIcon('<span style="color:#888888; font-size:14px; text-shadow:0 0 6px #888888;">▪</span>'),
+  port:        glyphIcon('<span style="color:#00ffff; font-size:14px; text-shadow:0 0 6px #00ffff;">⚓</span>'),
+  sigint:      glyphIcon('<span style="color:#ff00ff; font-size:14px; text-shadow:0 0 6px #ff00ff;">◉</span>'),
 };
-const assetIconDefault = glyphIcon('<span style="color:#3fb950; font-size:16px; text-shadow:0 0 4px #000;">★</span>');
+const assetIconDefault = glyphIcon('<span style="color:#00ff41; font-size:14px; text-shadow:0 0 6px #00ff41;">★</span>');
 
 async function fetchJSON(url) {
   const res = await fetch(url);
@@ -98,12 +139,12 @@ async function loadFlights() {
       const m = L.marker([f.lat, f.lon], { icon: planeIcon });
       m.bindPopup(
         `<div class="flight-popup">
-          <strong>${f.callsign || f.icao}</strong>
+          <strong>> ${f.callsign || f.icao}</strong>
           <div class="row"><span>ICAO</span><span>${f.icao}</span></div>
-          <div class="row"><span>Altitude</span><span>${f.altitude || "—"} ft</span></div>
-          <div class="row"><span>Speed</span><span>${f.speed || "—"} kt</span></div>
-          <div class="row"><span>Heading</span><span>${f.heading || "—"}°</span></div>
-          <div class="row"><span>Type</span><span>${f.aircraft_type || "—"}</span></div>
+          <div class="row"><span>ALTITUDE</span><span>${f.altitude || "—"} FT</span></div>
+          <div class="row"><span>SPEED</span><span>${f.speed || "—"} KT</span></div>
+          <div class="row"><span>HEADING</span><span>${f.heading || "—"}°</span></div>
+          <div class="row"><span>TYPE</span><span>${f.aircraft_type || "—"}</span></div>
         </div>`
       );
       flightLayer.addLayer(m);
@@ -111,7 +152,7 @@ async function loadFlights() {
     document.getElementById("stat-flights").textContent = res.count || 0;
     setDot("dot-flights", res.stale ? "yellow" : (res.count ? "green" : "grey"));
   } catch (e) {
-    console.error("Flights error:", e);
+    console.error("[ERROR] ADS-B FEED FAILURE:", e);
     setDot("dot-flights", "red");
   }
 }
@@ -125,12 +166,12 @@ async function loadShips() {
       const m = L.marker([s.lat, s.lon], { icon: shipIcon });
       m.bindPopup(
         `<div class="ship-popup">
-          <strong>${s.name || "Unknown vessel"}</strong>
+          <strong>> ${s.name || "UNKNOWN VESSEL"}</strong>
           <div class="row"><span>MMSI</span><span>${s.mmsi}</span></div>
-          <div class="row"><span>Speed</span><span>${s.speed != null ? s.speed + " kn" : "—"}</span></div>
-          <div class="row"><span>Heading</span><span>${s.heading != null ? s.heading + "°" : "—"}</span></div>
-          <div class="row"><span>Type</span><span>${s.ship_type || "—"}</span></div>
-          <div class="row"><span>Flag</span><span>${s.flag || "—"}</span></div>
+          <div class="row"><span>SPEED</span><span>${s.speed != null ? s.speed + " KN" : "—"}</span></div>
+          <div class="row"><span>HEADING</span><span>${s.heading != null ? s.heading + "°" : "—"}</span></div>
+          <div class="row"><span>TYPE</span><span>${s.ship_type || "—"}</span></div>
+          <div class="row"><span>FLAG</span><span>${s.flag || "—"}</span></div>
         </div>`
       );
       shipLayer.addLayer(m);
@@ -138,7 +179,7 @@ async function loadShips() {
     document.getElementById("stat-ships").textContent = res.count || 0;
     setDot("dot-ships", res.stale ? "yellow" : (res.count ? "green" : "grey"));
   } catch (e) {
-    console.error("Ships error:", e);
+    console.error("[ERROR] AIS FEED FAILURE:", e);
     setDot("dot-ships", "red");
   }
 }
@@ -149,7 +190,7 @@ async function loadNews() {
     const container = document.getElementById("news-list");
     container.innerHTML = "";
     if (!res.data || res.data.length === 0) {
-      container.innerHTML = '<div class="weather-desc" style="padding: 8px 0;">No articles yet.</div>';
+      container.innerHTML = '<div class="loading-text">> NO INTERCEPTS DETECTED</div>';
     } else {
       res.data.forEach(n => {
         const item = document.createElement("div");
@@ -168,7 +209,7 @@ async function loadNews() {
     setDot("dot-news", res.stale ? "yellow" : (res.count ? "green" : "grey"));
     setStale("news-stale", res.stale);
   } catch (e) {
-    console.error("News error:", e);
+    console.error("[ERROR] SIGINT FEED FAILURE:", e);
     setDot("dot-news", "red");
   }
 }
@@ -179,7 +220,7 @@ async function loadWeather() {
     const d = res.data;
     const el = document.getElementById("weather-content");
     if (!d) {
-      el.innerHTML = '<div class="weather-desc">No data</div>';
+      el.innerHTML = '<div class="loading-text">> NO SATELLITE DATA</div>';
       return;
     }
     el.innerHTML = `
@@ -187,18 +228,18 @@ async function loadWeather() {
         <div class="weather-temp">${d.temperature != null ? Math.round(d.temperature) + "°C" : "—"}</div>
         <div>
           <div class="weather-desc">${d.description || "—"}</div>
-          <div class="weather-desc" style="font-size:0.7rem;">Feels ${d.apparent_temperature != null ? Math.round(d.apparent_temperature) + "°" : "—"}</div>
+          <div class="weather-desc" style="font-size:0.7rem;">APPARENT: ${d.apparent_temperature != null ? Math.round(d.apparent_temperature) + "°" : "—"}</div>
         </div>
       </div>
       <div class="weather-grid">
-        <div class="weather-item"><div class="label">Humidity</div><div class="value">${d.humidity != null ? d.humidity + "%" : "—"}</div></div>
-        <div class="weather-item"><div class="label">Wind</div><div class="value">${d.wind_speed != null ? d.wind_speed + " km/h" : "—"}</div></div>
-        <div class="weather-item"><div class="label">Direction</div><div class="value">${d.wind_direction != null ? d.wind_direction + "°" : "—"}</div></div>
-        <div class="weather-item"><div class="label">Precip</div><div class="value">${d.precipitation != null ? d.precipitation + " mm" : "—"}</div></div>
+        <div class="weather-item"><div class="label">HUMIDITY</div><div class="value">${d.humidity != null ? d.humidity + "%" : "—"}</div></div>
+        <div class="weather-item"><div class="label">WIND</div><div class="value">${d.wind_speed != null ? d.wind_speed + " KM/H" : "—"}</div></div>
+        <div class="weather-item"><div class="label">DIRECTION</div><div class="value">${d.wind_direction != null ? d.wind_direction + "°" : "—"}</div></div>
+        <div class="weather-item"><div class="label">PRECIP</div><div class="value">${d.precipitation != null ? d.precipitation + " MM" : "—"}</div></div>
       </div>`;
     setStale("weather-stale", res.stale);
   } catch (e) {
-    console.error("Weather error:", e);
+    console.error("[ERROR] METEOROLOGICAL FEED FAILURE:", e);
   }
 }
 
@@ -215,12 +256,12 @@ async function loadEnergy() {
     ind.className = `energy-indicator ${d.level || "grey"}`;
     document.getElementById("energy-status").textContent = d.status || "UNKNOWN";
     document.getElementById("energy-notes").textContent =
-      `${d.outage_reports || 0} outage reports • ${d.notes || ""}`;
+      `${d.outage_reports || 0} OUTAGE REPORTS // ${d.notes || ""}`;
     document.getElementById("stat-energy").textContent = d.status || "—";
     setDot("dot-energy", d.level || "grey");
     setStale("energy-stale", res.stale);
   } catch (e) {
-    console.error("Energy error:", e);
+    console.error("[ERROR] ENERGY GRID FEED FAILURE:", e);
     setDot("dot-energy", "red");
   }
 }
@@ -232,16 +273,16 @@ function formatDate(iso) {
     if (isNaN(d)) return iso.slice(0, 16);
     const now = new Date();
     const diffMin = Math.floor((now - d) / 60000);
-    if (diffMin < 1) return "just now";
-    if (diffMin < 60) return `${diffMin}m ago`;
-    if (diffMin < 1440) return `${Math.floor(diffMin / 60)}h ago`;
-    return `${Math.floor(diffMin / 1440)}d ago`;
+    if (diffMin < 1) return "T+0M";
+    if (diffMin < 60) return `T+${diffMin}M`;
+    if (diffMin < 1440) return `T+${Math.floor(diffMin / 60)}H`;
+    return `T+${Math.floor(diffMin / 1440)}D`;
   } catch { return ""; }
 }
 
 function escapeHtml(s) {
   if (!s) return "";
-  return s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","'":"&quot;","'":"&#39;"}[c]));
 }
 
 async function loadMilitaryBases() {
@@ -254,16 +295,16 @@ async function loadMilitaryBases() {
       const m = L.marker([b.lat, b.lon], { icon });
       m.bindPopup(
         `<div class="flight-popup">
-          <strong>${escapeHtml(b.name)}</strong>
-          <div class="row"><span>Country</span><span>${b.country || "—"}</span></div>
-          <div class="row"><span>Type</span><span>${b.type || "—"}</span></div>
+          <strong>> ${escapeHtml(b.name)}</strong>
+          <div class="row"><span>COUNTRY</span><span>${b.country || "—"}</span></div>
+          <div class="row"><span>TYPE</span><span>${b.type || "—"}</span></div>
           <div class="row" style="display:block; color:var(--text); margin-top:4px;">${escapeHtml(b.description || "")}</div>
         </div>`
       );
       basesLayer.addLayer(m);
     });
   } catch (e) {
-    console.error("Bases error:", e);
+    console.error("[ERROR] MILITARY BASES FEED FAILURE:", e);
   }
 }
 
@@ -277,16 +318,16 @@ async function loadStrategicAssets() {
       const m = L.marker([a.lat, a.lon], { icon });
       m.bindPopup(
         `<div class="flight-popup">
-          <strong>${escapeHtml(a.name)}</strong>
-          <div class="row"><span>Type</span><span>${a.type || "—"}</span></div>
-          <div class="row"><span>Importance</span><span>${a.importance || "—"}</span></div>
+          <strong>> ${escapeHtml(a.name)}</strong>
+          <div class="row"><span>TYPE</span><span>${a.type || "—"}</span></div>
+          <div class="row"><span>IMPORTANCE</span><span>${a.importance || "—"}</span></div>
           <div class="row" style="display:block; color:var(--text); margin-top:4px;">${escapeHtml(a.description || "")}</div>
         </div>`
       );
       assetsLayer.addLayer(m);
     });
   } catch (e) {
-    console.error("Assets error:", e);
+    console.error("[ERROR] STRATEGIC ASSETS FEED FAILURE:", e);
   }
 }
 
@@ -302,10 +343,10 @@ async function loadMovements() {
         const m = L.marker([mv.lat, mv.lon], { icon: movementIcon });
         m.bindPopup(
           `<div class="flight-popup">
-            <strong>${escapeHtml(mv.type || "movement")}</strong>
+            <strong>> ${escapeHtml(mv.type || "MOVEMENT")}</strong>
             <div class="row" style="display:block; color:var(--text);">${escapeHtml(mv.description || "")}</div>
-            <div class="row"><span>Confidence</span><span>${mv.confidence || "—"}</span></div>
-            <div class="row"><span>Time</span><span>${formatDate(mv.timestamp)}</span></div>
+            <div class="row"><span>CONFIDENCE</span><span>${mv.confidence || "—"}</span></div>
+            <div class="row"><span>TIME</span><span>${formatDate(mv.timestamp)}</span></div>
           </div>`
         );
         movementsLayer.addLayer(m);
@@ -315,7 +356,7 @@ async function loadMovements() {
       item.className = "news-item";
       item.innerHTML = `
         <div class="news-meta">
-          <span class="news-source">${escapeHtml(mv.type || "alert")}</span>
+          <span class="news-source">${escapeHtml(mv.type || "ALERT")}</span>
           <span>${formatDate(mv.timestamp)}</span>
         </div>
         <div class="news-title">${escapeHtml(mv.description || "")}</div>`;
@@ -323,23 +364,27 @@ async function loadMovements() {
     });
 
     if (!res.data || res.data.length === 0) {
-      list.innerHTML = '<div class="weather-desc">No alerts detected.</div>';
+      list.innerHTML = '<div class="loading-text">> NO ACTIVE ALERTS</div>';
     }
     document.getElementById("stat-movements").textContent = res.count || 0;
     setDot("dot-military", (res.count ? "yellow" : "green"));
   } catch (e) {
-    console.error("Movements error:", e);
+    console.error("[ERROR] TROOP MOVEMENTS FEED FAILURE:", e);
     setDot("dot-military", "red");
   }
 }
 
 async function refreshAll() {
+  console.log('%c> REFRESHING INTELLIGENCE FEEDS...', 'color: #008f11;');
   await Promise.allSettled([
     loadFlights(), loadShips(), loadNews(), loadWeather(), loadEnergy(),
     loadMilitaryBases(), loadStrategicAssets(), loadMovements(),
   ]);
-  document.getElementById("last-update").textContent = "Updated " + new Date().toLocaleTimeString();
+  const now = new Date();
+  document.getElementById("last-update").textContent = 
+    `> LAST UPDATE: ${now.toISOString().replace('T', ' ').slice(0, 19)} UTC`;
   document.getElementById("loading").classList.add("hidden");
+  console.log('%c> INTELLIGENCE UPDATE COMPLETE', 'color: #00ff41;');
 }
 
 async function triggerBackendRefresh() {
@@ -347,7 +392,9 @@ async function triggerBackendRefresh() {
 }
 
 // Initial load + polling
-refreshAll();
+setTimeout(() => {
+  refreshAll();
+}, 2000);
+
 setInterval(refreshAll, 60000);
-// Hint backend to refresh every 5 min (backend scheduler also runs independently)
 setInterval(triggerBackendRefresh, 5 * 60 * 1000);
