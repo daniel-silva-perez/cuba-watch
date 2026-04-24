@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"pkill -f \\\"cuba-monitor.*main.py\\\" 2>/dev/null; pkill -f \\\"python main.py\\\" 2>/dev/null; lsof -ti:8080 | xargs -r kill -9 2>/dev/null; sleep 1; cd ~/.openclaw/workspace/projects/cuba-monit...",
+  "error": "Exit code 144",
+  "timestamp": "2026-04-24T10:54:01.352Z",
+  "retry_count": 2
+}

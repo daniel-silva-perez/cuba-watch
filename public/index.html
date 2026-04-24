@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cuba Situation Monitor</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header>
+  <h1><span class="flag">🇨🇺</span> Cuba Situation Monitor</h1>
+  <div class="header-stats">
+    <div class="stat-badge"><span class="dot" id="dot-flights"></span><span>Flights: <b id="stat-flights">–</b></span></div>
+    <div class="stat-badge"><span class="dot" id="dot-ships"></span><span>Ships: <b id="stat-ships">–</b></span></div>
+    <div class="stat-badge"><span class="dot" id="dot-news"></span><span>News: <b id="stat-news">–</b></span></div>
+    <div class="stat-badge"><span class="dot" id="dot-energy"></span><span>Energy: <b id="stat-energy">–</b></span></div>
+    <div class="stat-badge"><span class="dot green" id="dot-military"></span><span>Movements: <b id="stat-movements">–</b></span></div>
+  </div>
+  <div class="header-right">
+    <span id="last-update">Loading…</span>
+    <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
+  </div>
+</header>
+
+<div class="main-layout">
+  <div class="map-wrapper">
+    <div id="map"></div>
+    <div class="layer-control" id="layer-control">
+      <div class="layer-control-title">Layers</div>
+      <label class="layer-toggle">
+        <input type="checkbox" id="layer-flights" checked onchange="toggleLayer('flights', this.checked)">
+        <span class="layer-icon">✈</span> Flights
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="layer-ships" checked onchange="toggleLayer('ships', this.checked)">
+        <span class="layer-icon">⛴</span> Ships
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="layer-bases" checked onchange="toggleLayer('bases', this.checked)">
+        <span class="layer-icon">🛡</span> Military Bases
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="layer-movements" checked onchange="toggleLayer('movements', this.checked)">
+        <span class="layer-icon">🚩</span> Troop Movements
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="layer-assets" checked onchange="toggleLayer('assets', this.checked)">
+        <span class="layer-icon">⚡</span> Strategic Assets
+      </label>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3>Havana Weather</h3>
+      <div id="weather-content">
+        <div class="weather-desc">Loading…</div>
+      </div>
+      <div class="stale-banner" id="weather-stale">⚠ Stale data</div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Energy Status</h3>
+      <div class="energy-bar">
+        <div class="energy-indicator grey" id="energy-indicator"></div>
+        <div>
+          <div class="energy-text" id="energy-status">UNKNOWN</div>
+          <div class="energy-notes" id="energy-notes">—</div>
+        </div>
+      </div>
+      <div class="stale-banner" id="energy-stale">⚠ Stale data</div>
+    </div>
+
+    <div class="sidebar-section" id="movements-section">
+      <h3>🚩 Troop Movement Alerts</h3>
+      <div class="movements-list" id="movements-list">
+        <div class="weather-desc">No alerts detected.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="flex:1; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+      <div style="padding: 10px 12px 0;">
+        <h3>News Feed</h3>
+        <div class="stale-banner" id="news-stale">⚠ Stale data</div>
+      </div>
+      <div class="news-scroll" id="news-list">
+        <div class="weather-desc" style="padding: 8px 0;">Loading…</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="loading-overlay" id="loading">Fetching initial data…</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+// Cuba Situation Monitor — frontend
+
+const map = L.map("map", {
+  center: [21.8, -79.5],
+  zoom: 6,
+  zoomControl: true,
+  attributionControl: false,
+});
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 18,
+}).addTo(map);
+
+// Cuba outline highlight
+const cubaBounds = L.latLngBounds([[19.8, -85.0], [23.3, -74.0]]);
+L.rectangle(cubaBounds, { color: "#58a6ff", weight: 1, fill: false, dashArray: "4,4" }).addTo(map);
+
+const flightLayer = L.layerGroup().addTo(map);
+const shipLayer = L.layerGroup().addTo(map);
+const basesLayer = L.layerGroup().addTo(map);
+const movementsLayer = L.layerGroup().addTo(map);
+const assetsLayer = L.layerGroup().addTo(map);
+
+const layerGroups = {
+  flights: flightLayer,
+  ships: shipLayer,
+  bases: basesLayer,
+  movements: movementsLayer,
+  assets: assetsLayer,
+};
+
+function toggleLayer(key, visible) {
+  const g = layerGroups[key];
+  if (!g) return;
+  if (visible) map.addLayer(g); else map.removeLayer(g);
+}
+window.toggleLayer = toggleLayer;
+
+function glyphIcon(html, size = 18) {
+  return L.divIcon({
+    className: "glyph-icon",
+    html: `<div class="glyph">${html}</div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+const planeIcon = L.divIcon({
+  className: "plane-icon",
+  html: '<div style="color:#58a6ff; font-size:16px; text-shadow:0 0 4px #000;">✈</div>',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
+const shipIcon = L.divIcon({
+  className: "ship-icon",
+  html: '<div style="color:#d29922; font-size:14px; text-shadow:0 0 4px #000;">⛴</div>',
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
+});
+
+const baseIconCuba = glyphIcon('<span style="color:#f85149; font-size:18px; text-shadow:0 0 4px #000;">🛡</span>');
+const baseIconUS   = glyphIcon('<span style="color:#58a6ff; font-size:18px; text-shadow:0 0 4px #000;">🛡</span>');
+const movementIcon = glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🚩</span>');
+
+const assetIcons = {
+  power_plant: glyphIcon('<span style="color:#d29922; font-size:16px; text-shadow:0 0 4px #000;">⚡</span>'),
+  refinery:    glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🛢</span>'),
+  oil_field:   glyphIcon('<span style="color:#db6d28; font-size:16px; text-shadow:0 0 4px #000;">🛢</span>'),
+  mining:      glyphIcon('<span style="color:#8b949e; font-size:16px; text-shadow:0 0 4px #000;">⛏</span>'),
+  port:        glyphIcon('<span style="color:#58a6ff; font-size:16px; text-shadow:0 0 4px #000;">⚓</span>'),
+  sigint:      glyphIcon('<span style="color:#a371f7; font-size:16px; text-shadow:0 0 4px #000;">📡</span>'),
+};
+const assetIconDefault = glyphIcon('<span style="color:#3fb950; font-size:16px; text-shadow:0 0 4px #000;">★</span>');
+
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} → ${res.status}`);
+  return res.json();
+}
+
+function setStale(elId, stale) {
+  const el = document.getElementById(elId);
+  if (el) el.classList.toggle("visible", !!stale);
+}
+
+function setDot(elId, color) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.className = "dot " + color;
+}
+
+async function loadFlights() {
+  try {
+    const res = await fetchJSON("/api/flights");
+    flightLayer.clearLayers();
+    (res.data || []).forEach(f => {
+      if (f.lat == null || f.lon == null) return;
+      const m = L.marker([f.lat, f.lon], { icon: planeIcon });
+      m.bindPopup(
+        `<div class="flight-popup">
+          <strong>${f.callsign || f.icao}</strong>
+          <div class="row"><span>ICAO</span><span>${f.icao}</span></div>
+          <div class="row"><span>Altitude</span><span>${f.altitude || "—"} ft</span></div>
+          <div class="row"><span>Speed</span><span>${f.speed || "—"} kt</span></div>
+          <div class="row"><span>Heading</span><span>${f.heading || "—"}°</span></div>
+          <div class="row"><span>Type</span><span>${f.aircraft_type || "—"}</span></div>
+        </div>`
+      );
+      flightLayer.addLayer(m);
+    });
+    document.getElementById("stat-flights").textContent = res.count || 0;
+    setDot("dot-flights", res.stale ? "yellow" : (res.count ? "green" : "grey"));
+  } catch (e) {
+    console.error("Flights error:", e);
+    setDot("dot-flights", "red");
+  }
+}
+
+async function loadShips() {
+  try {
+    const res = await fetchJSON("/api/ships");
+    shipLayer.clearLayers();
+    (res.data || []).forEach(s => {
+      if (s.lat == null || s.lon == null) return;
+      const m = L.marker([s.lat, s.lon], { icon: shipIcon });
+      m.bindPopup(
+        `<div class="ship-popup">
+          <strong>${s.name || "Unknown vessel"}</strong>
+          <div class="row"><span>MMSI</span><span>${s.mmsi}</span></div>
+          <div class="row"><span>Speed</span><span>${s.speed != null ? s.speed + " kn" : "—"}</span></div>
+          <div class="row"><span>Heading</span><span>${s.heading != null ? s.heading + "°" : "—"}</span></div>
+          <div class="row"><span>Type</span><span>${s.ship_type || "—"}</span></div>
+          <div class="row"><span>Flag</span><span>${s.flag || "—"}</span></div>
+        </div>`
+      );
+      shipLayer.addLayer(m);
+    });
+    document.getElementById("stat-ships").textContent = res.count || 0;
+    setDot("dot-ships", res.stale ? "yellow" : (res.count ? "green" : "grey"));
+  } catch (e) {
+    console.error("Ships error:", e);
+    setDot("dot-ships", "red");
+  }
+}
+
+async function loadNews() {
+  try {
+    const res = await fetchJSON("/api/news");
+    const container = document.getElementById("news-list");
+    container.innerHTML = "";
+    if (!res.data || res.data.length === 0) {
+      container.innerHTML = '<div class="weather-desc" style="padding: 8px 0;">No articles yet.</div>';
+    } else {
+      res.data.forEach(n => {
+        const item = document.createElement("div");
+        item.className = "news-item";
+        item.onclick = () => window.open(n.url, "_blank");
+        item.innerHTML = `
+          <div class="news-meta">
+            <span class="news-source">${n.source}</span>
+            <span>${formatDate(n.published)}</span>
+          </div>
+          <div class="news-title">${escapeHtml(n.title)}</div>`;
+        container.appendChild(item);
+      });
+    }
+    document.getElementById("stat-news").textContent = res.count || 0;
+    setDot("dot-news", res.stale ? "yellow" : (res.count ? "green" : "grey"));
+    setStale("news-stale", res.stale);
+  } catch (e) {
+    console.error("News error:", e);
+    setDot("dot-news", "red");
+  }
+}
+
+async function loadWeather() {
+  try {
+    const res = await fetchJSON("/api/weather");
+    const d = res.data;
+    const el = document.getElementById("weather-content");
+    if (!d) {
+      el.innerHTML = '<div class="weather-desc">No data</div>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="weather-main">
+        <div class="weather-temp">${d.temperature != null ? Math.round(d.temperature) + "°C" : "—"}</div>
+        <div>
+          <div class="weather-desc">${d.description || "—"}</div>
+          <div class="weather-desc" style="font-size:0.7rem;">Feels ${d.apparent_temperature != null ? Math.round(d.apparent_temperature) + "°" : "—"}</div>
+        </div>
+      </div>
+      <div class="weather-grid">
+        <div class="weather-item"><div class="label">Humidity</div><div class="value">${d.humidity != null ? d.humidity + "%" : "—"}</div></div>
+        <div class="weather-item"><div class="label">Wind</div><div class="value">${d.wind_speed != null ? d.wind_speed + " km/h" : "—"}</div></div>
+        <div class="weather-item"><div class="label">Direction</div><div class="value">${d.wind_direction != null ? d.wind_direction + "°" : "—"}</div></div>
+        <div class="weather-item"><div class="label">Precip</div><div class="value">${d.precipitation != null ? d.precipitation + " mm" : "—"}</div></div>
+      </div>`;
+    setStale("weather-stale", res.stale);
+  } catch (e) {
+    console.error("Weather error:", e);
+  }
+}
+
+async function loadEnergy() {
+  try {
+    const res = await fetchJSON("/api/energy");
+    const d = res.data;
+    const ind = document.getElementById("energy-indicator");
+    if (!d) {
+      ind.className = "energy-indicator grey";
+      document.getElementById("energy-status").textContent = "UNKNOWN";
+      return;
+    }
+    ind.className = `energy-indicator ${d.level || "grey"}`;
+    document.getElementById("energy-status").textContent = d.status || "UNKNOWN";
+    document.getElementById("energy-notes").textContent =
+      `${d.outage_reports || 0} outage reports • ${d.notes || ""}`;
+    document.getElementById("stat-energy").textContent = d.status || "—";
+    setDot("dot-energy", d.level || "grey");
+    setStale("energy-stale", res.stale);
+  } catch (e) {
+    console.error("Energy error:", e);
+    setDot("dot-energy", "red");
+  }
+}
+
+function formatDate(iso) {
+  if (!iso) return "";
+  try {
+    const d = new Date(iso);
+    if (isNaN(d)) return iso.slice(0, 16);
+    const now = new Date();
+    const diffMin = Math.floor((now - d) / 60000);
+    if (diffMin < 1) return "just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffMin < 1440) return `${Math.floor(diffMin / 60)}h ago`;
+    return `${Math.floor(diffMin / 1440)}d ago`;
+  } catch { return ""; }
+}
+
+function escapeHtml(s) {
+  if (!s) return "";
+  return s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+async function loadMilitaryBases() {
+  try {
+    const res = await fetchJSON("/api/military/bases");
+    basesLayer.clearLayers();
+    (res.data || []).forEach(b => {
+      if (b.lat == null || b.lon == null) return;
+      const icon = b.country === "US" ? baseIconUS : baseIconCuba;
+      const m = L.marker([b.lat, b.lon], { icon });
+      m.bindPopup(
+        `<div class="flight-popup">
+          <strong>${escapeHtml(b.name)}</strong>
+          <div class="row"><span>Country</span><span>${b.country || "—"}</span></div>
+          <div class="row"><span>Type</span><span>${b.type || "—"}</span></div>
+          <div class="row" style="display:block; color:var(--text); margin-top:4px;">${escapeHtml(b.description || "")}</div>
+        </div>`
+      );
+      basesLayer.addLayer(m);
+    });
+  } catch (e) {
+    console.error("Bases error:", e);
+  }
+}
+
+async function loadStrategicAssets() {
+  try {
+    const res = await fetchJSON("/api/strategic/assets");
+    assetsLayer.clearLayers();
+    (res.data || []).forEach(a => {
+      if (a.lat == null || a.lon == null) return;
+      const icon = assetIcons[a.type] || assetIconDefault;
+      const m = L.marker([a.lat, a.lon], { icon });
+      m.bindPopup(
+        `<div class="flight-popup">
+          <strong>${escapeHtml(a.name)}</strong>
+          <div class="row"><span>Type</span><span>${a.type || "—"}</span></div>
+          <div class="row"><span>Importance</span><span>${a.importance || "—"}</span></div>
+          <div class="row" style="display:block; color:var(--text); margin-top:4px;">${escapeHtml(a.description || "")}</div>
+        </div>`
+      );
+      assetsLayer.addLayer(m);
+    });
+  } catch (e) {
+    console.error("Assets error:", e);
+  }
+}
+
+async function loadMovements() {
+  try {
+    const res = await fetchJSON("/api/military/movements");
+    movementsLayer.clearLayers();
+    const list = document.getElementById("movements-list");
+    list.innerHTML = "";
+
+    (res.data || []).forEach(mv => {
+      if (mv.lat != null && mv.lon != null) {
+        const m = L.marker([mv.lat, mv.lon], { icon: movementIcon });
+        m.bindPopup(
+          `<div class="flight-popup">
+            <strong>${escapeHtml(mv.type || "movement")}</strong>
+            <div class="row" style="display:block; color:var(--text);">${escapeHtml(mv.description || "")}</div>
+            <div class="row"><span>Confidence</span><span>${mv.confidence || "—"}</span></div>
+            <div class="row"><span>Time</span><span>${formatDate(mv.timestamp)}</span></div>
+          </div>`
+        );
+        movementsLayer.addLayer(m);
+      }
+
+      const item = document.createElement("div");
+      item.className = "news-item";
+      item.innerHTML = `
+        <div class="news-meta">
+          <span class="news-source">${escapeHtml(mv.type || "alert")}</span>
+          <span>${formatDate(mv.timestamp)}</span>
+        </div>
+        <div class="news-title">${escapeHtml(mv.description || "")}</div>`;
+      list.appendChild(item);
+    });
+
+    if (!res.data || res.data.length === 0) {
+      list.innerHTML = '<div class="weather-desc">No alerts detected.</div>';
+    }
+    document.getElementById("stat-movements").textContent = res.count || 0;
+    setDot("dot-military", (res.count ? "yellow" : "green"));
+  } catch (e) {
+    console.error("Movements error:", e);
+    setDot("dot-military", "red");
+  }
+}
+
+async function refreshAll() {
+  await Promise.allSettled([
+    loadFlights(), loadShips(), loadNews(), loadWeather(), loadEnergy(),
+    loadMilitaryBases(), loadStrategicAssets(), loadMovements(),
+  ]);
+  document.getElementById("last-update").textContent = "Updated " + new Date().toLocaleTimeString();
+  document.getElementById("loading").classList.add("hidden");
+}
+
+async function triggerBackendRefresh() {
+  try { await fetch("/api/refresh"); } catch {}
+}
+
+// Initial load + polling
+refreshAll();
+setInterval(refreshAll, 60000);
+// Hint backend to refresh every 5 min (backend scheduler also runs independently)
+setInterval(triggerBackendRefresh, 5 * 60 * 1000);
