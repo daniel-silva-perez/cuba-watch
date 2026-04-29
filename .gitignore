@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Runtime data
+*.db
+*.sqlite
+*.sqlite3
+.env
+
+# Local agent state
+.omc/
+.omx/
+.omg/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/

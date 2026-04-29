@@ -1,0 +1,10 @@
+services:
+  cuba-watch:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Set to true for a deterministic portfolio demo with local sample data.
+      CUBA_WATCH_DEMO_MODE: "false"
+    volumes:
+      - ./cuba_monitor.db:/app/cuba_monitor.db
