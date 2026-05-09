@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-DB_PATH = Path(os.getenv("CUBA_WATCH_DB_PATH", str(Path(__file__).parent.parent / "cuba_monitor.db")))
+_default_db = "/tmp/cuba_monitor.db" if os.getenv("VERCEL", "").lower() in {"1", "true", "yes"} else str(Path(__file__).parent.parent / "cuba_monitor.db")
+DB_PATH = Path(os.getenv("CUBA_WATCH_DB_PATH", _default_db))
 
 
 def get_conn():
