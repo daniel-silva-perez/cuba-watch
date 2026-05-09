@@ -8,6 +8,8 @@ Cuba Watch collects data from free and open sources—including flight tracking,
 
 > **Disclaimer:** This project relies exclusively on public data sources. Energy and connectivity signals are treated as proxy metrics; conclusions should not be overstated. All timestamps are stored in UTC.
 
+![Cuba Watch Dashboard](screenshot.png)
+
 ## Features
 
 - **Multi-Source Aggregation:** Automated collection from ADS-B (flights), AIS (ships), RSS news feeds, weather services, seismic monitors, IODA connectivity data, and energy indicators.

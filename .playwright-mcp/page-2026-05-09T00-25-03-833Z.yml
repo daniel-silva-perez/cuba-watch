@@ -1,0 +1,239 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]: OSINT // PUBLIC SOURCES // CUBA WATCH
+    - generic [ref=e4]: OPEN-SOURCE SITUATIONAL AWARENESS
+    - generic [ref=e5]: 2026-05-09 00:25:03 UTC
+  - generic [ref=e6]:
+    - banner [ref=e7]:
+      - generic [ref=e8]: analyst@osint:~/watch/cuba$ ./situation_monitor --realtime █
+      - generic [ref=e9]:
+        - generic [ref=e12]: "ADS-B: --"
+        - generic [ref=e15]: "AIS: --"
+        - generic [ref=e18]: "NEWS: --"
+        - generic [ref=e21]: "GRID: --"
+        - generic [ref=e24]: "SEIS: --"
+        - generic [ref=e27]: "NET: --"
+        - generic [ref=e30]: "ALERTS: --"
+      - generic [ref=e31]:
+        - generic [ref=e32]: AWAITING DATA LINK...
+        - button "[ EXECUTE REFRESH ]" [ref=e33] [cursor=pointer]
+    - generic [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: ">> OSINT DISPLAY :: CUBAN THEATER <<"
+        - generic [ref=e38]: 21.5000°N 79.5000°W
+      - complementary [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - generic "Map zoom controls" [ref=e44]:
+                - button "Zoom in" [ref=e45] [cursor=pointer]: +
+                - button "Zoom out" [ref=e46] [cursor=pointer]: −
+              - generic [ref=e47]: "[ MAP MODE ]"
+            - button "Collapse [ MAP MODE ]" [expanded] [ref=e48] [cursor=pointer]: −
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - button "NIGHT VIS" [ref=e51] [cursor=pointer]
+              - button "SAT" [ref=e52] [cursor=pointer]
+              - button "DARK" [ref=e53] [cursor=pointer]
+              - button "STREET" [ref=e54] [cursor=pointer]
+              - button "TERRAIN" [ref=e55] [cursor=pointer]
+              - button "GLOBE" [ref=e56] [cursor=pointer]
+            - generic [ref=e57]: "[ NASA / SAT OVERLAYS ]"
+            - generic [ref=e58]:
+              - text: "Basemap: OpenStreetMap + local CSS night filter"
+              - text: "Note: Esri/CARTO/OSM basemaps are visual context, not live satellite collection."
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - text: DATE
+                - textbox "DATE" [ref=e61]: 2026-05-08
+              - generic [ref=e62]:
+                - text: OPACITY
+                - generic [ref=e63]: 62%
+                - slider "OPACITY 62%" [ref=e64]: "0.6"
+            - generic [ref=e65] [cursor=pointer]:
+              - checkbox "VIIRS TRUE COLOR GIBS" [ref=e66]
+              - img [ref=e68]
+              - generic [ref=e73]: VIIRS TRUE COLOR
+              - generic [ref=e74]: GIBS
+            - generic [ref=e75] [cursor=pointer]:
+              - checkbox "TERRA CLOUD/SURFACE GIBS" [ref=e76]
+              - img [ref=e78]
+              - generic [ref=e82]: TERRA CLOUD/SURFACE
+              - generic [ref=e83]: GIBS
+            - generic [ref=e84] [cursor=pointer]:
+              - checkbox "THERMAL ANOMALIES GIBS" [ref=e85]
+              - img [ref=e87]
+              - generic [ref=e92]: THERMAL ANOMALIES
+              - generic [ref=e93]: GIBS
+            - generic [ref=e94] [cursor=pointer]:
+              - checkbox "PRECIP RATE GIBS" [ref=e95]
+              - img [ref=e97]
+              - generic [ref=e102]: PRECIP RATE
+              - generic [ref=e103]: GIBS
+            - generic [ref=e104] [cursor=pointer]:
+              - checkbox "BLUE MARBLE NASA" [ref=e105]
+              - img [ref=e107]
+              - generic [ref=e112]: BLUE MARBLE
+              - generic [ref=e113]: NASA
+            - generic [ref=e114]:
+              - generic [ref=e115]: "Current satellite basemap: Esri World Imagery"
+              - generic [ref=e116]: "Near-real-time overlays: NASA GIBS/EOSDIS"
+              - generic [ref=e117]: "Optional future: Sentinel Hub, Mapbox Satellite, Google Earth Engine"
+            - generic [ref=e118]: "[ DATA FEEDS ]"
+            - generic [ref=e119] [cursor=pointer]:
+              - checkbox "ADS-B TRACKING ACTIVE" [checked] [ref=e120]
+              - img [ref=e122]
+              - generic [ref=e126]: ADS-B TRACKING
+              - generic [ref=e127]: ACTIVE
+            - generic [ref=e128] [cursor=pointer]:
+              - checkbox "MARITIME AIS ACTIVE" [checked] [ref=e129]
+              - img [ref=e131]
+              - generic [ref=e136]: MARITIME AIS
+              - generic [ref=e137]: ACTIVE
+            - generic [ref=e138] [cursor=pointer]:
+              - checkbox "MIL INSTALLATIONS ACTIVE" [checked] [ref=e139]
+              - img [ref=e141]
+              - generic [ref=e146]: MIL INSTALLATIONS
+              - generic [ref=e147]: ACTIVE
+            - generic [ref=e148] [cursor=pointer]:
+              - checkbox "MOVEMENT INDICATORS STANDBY" [checked] [ref=e149]
+              - img [ref=e151]
+              - generic [ref=e158]: MOVEMENT INDICATORS
+              - generic [ref=e159]: STANDBY
+            - generic [ref=e160] [cursor=pointer]:
+              - checkbox "STRATEGIC ASSETS ACTIVE" [checked] [ref=e161]
+              - img [ref=e163]
+              - generic [ref=e167]: STRATEGIC ASSETS
+              - generic [ref=e168]: ACTIVE
+            - generic [ref=e169] [cursor=pointer]:
+              - checkbox "USGS SEISMIC ACTIVE" [checked] [ref=e170]
+              - img [ref=e172]
+              - generic [ref=e177]: USGS SEISMIC
+              - generic [ref=e178]: ACTIVE
+            - generic [ref=e179] [cursor=pointer]:
+              - checkbox "UNDERSEA CABLE CONTEXT" [checked] [ref=e180]
+              - img [ref=e182]
+              - generic [ref=e188]: UNDERSEA CABLE
+              - generic [ref=e189]: CONTEXT
+            - generic [ref=e190] [cursor=pointer]:
+              - checkbox "ADVISORY CONTEXT TODO" [checked] [ref=e191]
+              - img [ref=e193]
+              - generic [ref=e198]: ADVISORY CONTEXT
+              - generic [ref=e199]: TODO
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e202]: ">> INTEL BRIEFING"
+            - generic [ref=e203]:
+              - generic [ref=e204]: OSINT
+              - button "Collapse >> INTEL BRIEFING" [expanded] [ref=e205] [cursor=pointer]: −
+          - generic [ref=e206]:
+            - generic [ref=e208]: "> BUILDING CORRELATED BRIEFING..."
+            - button "[ EXPORT BRIEF ]" [ref=e209] [cursor=pointer]
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - generic [ref=e212]: ">> SIGNAL RADAR"
+            - generic [ref=e213]:
+              - generic [ref=e214]: RADAR
+              - button "Collapse >> SIGNAL RADAR" [expanded] [ref=e215] [cursor=pointer]: −
+          - generic [ref=e218]: "> CALCULATING SIGNAL MOMENTUM..."
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - generic [ref=e221]: ">> WATCH MODE"
+            - generic [ref=e222]:
+              - generic [ref=e223]: AUTO
+              - button "Collapse >> WATCH MODE" [expanded] [ref=e224] [cursor=pointer]: −
+          - generic [ref=e227]: "> EVALUATING WATCH CONDITIONS..."
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - generic [ref=e230]: ">> DISCOVERY QUEUE"
+            - generic [ref=e231]:
+              - generic [ref=e232]: NEW
+              - button "Collapse >> DISCOVERY QUEUE" [expanded] [ref=e233] [cursor=pointer]: −
+          - generic [ref=e236]: "> SCANNING FOR NEW SIGNALS..."
+        - generic [ref=e237]:
+          - generic [ref=e238]:
+            - generic [ref=e239]: ">> SITREP STUDIO"
+            - generic [ref=e240]:
+              - generic [ref=e241]: MD
+              - button "Collapse >> SITREP STUDIO" [expanded] [ref=e242] [cursor=pointer]: −
+          - generic [ref=e243]:
+            - generic [ref=e244]:
+              - button "[ OPEN SITREP ]" [ref=e245] [cursor=pointer]
+              - button "[ COPY SITREP ]" [ref=e246] [cursor=pointer]
+            - generic [ref=e247]: Generates a Markdown situation report from briefing, radar, watch conditions, and discoveries.
+        - generic [ref=e248]:
+          - generic [ref=e249]:
+            - generic [ref=e250]: ">> PROVIDER CONTROL"
+            - generic [ref=e251]:
+              - generic [ref=e252]: CFG
+              - button "Collapse >> PROVIDER CONTROL" [expanded] [ref=e253] [cursor=pointer]: −
+          - generic [ref=e256]: "> LOADING PROVIDER SETTINGS..."
+        - generic [ref=e257]:
+          - generic [ref=e258]:
+            - generic [ref=e259]: ">> AUDIT TRAIL"
+            - generic [ref=e260]:
+              - generic [ref=e261]: LOG
+              - button "Collapse >> AUDIT TRAIL" [expanded] [ref=e262] [cursor=pointer]: −
+          - generic [ref=e265]: "> BUILDING AUDIT TRAIL..."
+        - generic [ref=e266]:
+          - generic [ref=e267]:
+            - generic [ref=e268]: ">> EVENT TIMELINE"
+            - generic [ref=e269]:
+              - generic [ref=e270]: LIVE
+              - button "Collapse >> EVENT TIMELINE" [expanded] [ref=e271] [cursor=pointer]: −
+          - generic [ref=e274]: "> NORMALIZING EVENTS..."
+        - generic [ref=e275]:
+          - generic [ref=e276]:
+            - generic [ref=e277]: ">> METEOROLOGICAL DATA"
+            - generic [ref=e278]:
+              - generic [ref=e279]: OSINT
+              - button "Collapse >> METEOROLOGICAL DATA" [expanded] [ref=e280] [cursor=pointer]: −
+          - generic [ref=e283]: "> ACQUIRING WEATHER + IMAGERY CONTEXT..."
+        - generic [ref=e284]:
+          - generic [ref=e285]:
+            - generic [ref=e286]: ">> SOURCE HEALTH"
+            - generic [ref=e287]:
+              - generic [ref=e288]: VERIFY
+              - button "Collapse >> SOURCE HEALTH" [expanded] [ref=e289] [cursor=pointer]: −
+          - generic [ref=e292]: "> CHECKING SOURCES..."
+        - generic [ref=e293]:
+          - generic [ref=e294]:
+            - generic [ref=e295]: ">> ENERGY GRID STATUS"
+            - generic [ref=e296]:
+              - generic [ref=e297]: PROXY
+              - button "Collapse >> ENERGY GRID STATUS" [expanded] [ref=e298] [cursor=pointer]: −
+          - generic [ref=e302]:
+            - generic [ref=e303]: UNKNOWN
+            - generic [ref=e304]: —
+        - generic [ref=e305]:
+          - generic [ref=e306]:
+            - generic [ref=e307]: ">> CONNECTIVITY"
+            - generic [ref=e308]:
+              - generic [ref=e309]: OSINT
+              - button "Collapse >> CONNECTIVITY" [expanded] [ref=e310] [cursor=pointer]: −
+          - generic [ref=e313]: "> QUERYING IODA SIGNALS..."
+        - generic [ref=e314]:
+          - generic [ref=e315]:
+            - generic [ref=e316]: ">> MOVEMENT INDICATORS"
+            - generic [ref=e317]:
+              - generic [ref=e318]: DERIVED
+              - button "Collapse >> MOVEMENT INDICATORS" [expanded] [ref=e319] [cursor=pointer]: −
+          - generic [ref=e322]: "> NO ACTIVE ALERTS"
+        - generic [ref=e323]:
+          - generic [ref=e324]:
+            - generic [ref=e325]: ">> NEWS SIGNALS"
+            - generic [ref=e326]:
+              - generic [ref=e327]: RSS
+              - button "Collapse >> NEWS SIGNALS" [expanded] [ref=e328] [cursor=pointer]: −
+          - generic [ref=e331]: "> SCANNING RSS FEEDS..."
+  - generic [ref=e332]:
+    - generic [ref=e333]: OSINT // PUBLIC SOURCES // CUBA WATCH
+    - generic [ref=e334]: PUBLIC-DATA DEMO // VERIFY BEFORE OPERATIONAL USE
+    - generic [ref=e335]: "TERMINAL SESSION: OSINT-89888-CUBA"
+  - generic:
+    - generic:
+      - generic: "> INITIALIZING SECURE CONNECTION..."
+      - generic: "> LOADING PUBLIC-SOURCE ADAPTERS..."
+      - generic: "> SOURCE POLICY: PUBLIC DATA ONLY"
+      - generic: "> LOADING OSINT DISPLAY..."
+      - generic: "> AWAITING DATA STREAM_"
