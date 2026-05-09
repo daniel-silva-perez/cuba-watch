@@ -19,7 +19,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 logger = logging.getLogger(__name__)
 
 PUBLIC_DIR = Path(__file__).parent / "public"
-DEMO_MODE = os.getenv("CUBA_WATCH_DEMO_MODE", "").lower() in {"1", "true", "yes", "demo"}
+IS_VERCEL = os.getenv("VERCEL", "").lower() in {"1", "true", "yes"}
+DEMO_MODE = os.getenv("CUBA_WATCH_DEMO_MODE", "true" if IS_VERCEL else "").lower() in {"1", "true", "yes", "demo"}
 
 
 class AnalystNoteIn(BaseModel):
@@ -34,11 +35,13 @@ async def lifespan(app: FastAPI):
     if DEMO_MODE:
         seed_demo_data(db)
         logger.info("Demo mode enabled — seeded local sample data")
-    else:
+    elif not IS_VERCEL:
         asyncio.create_task(refresh_all())
         start_scheduler()
+    else:
+        logger.info("Vercel serverless mode — background scheduler disabled")
     yield
-    if not DEMO_MODE:
+    if not DEMO_MODE and not IS_VERCEL:
         from src.scheduler import scheduler
         scheduler.shutdown(wait=False)
 
@@ -299,12 +302,12 @@ async def manual_refresh():
     return {"message": "Refresh triggered"}
 
 
-@app.get("/")
-async def index():
-    return FileResponse(PUBLIC_DIR / "index.html")
+if not IS_VERCEL:
+    @app.get("/")
+    async def index():
+        return FileResponse(PUBLIC_DIR / "index.html")
 
-
-app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="static")
+    app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="static")
 
 
 def _is_stale(rows: list, ts_field: str, minutes: int = 10) -> bool:

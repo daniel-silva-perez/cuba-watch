@@ -1,9 +1,10 @@
+import os
 import sqlite3
 import json
 from pathlib import Path
 from datetime import datetime
 
-DB_PATH = Path(__file__).parent.parent / "cuba_monitor.db"
+DB_PATH = Path(os.getenv("CUBA_WATCH_DB_PATH", str(Path(__file__).parent.parent / "cuba_monitor.db")))
 
 
 def get_conn():

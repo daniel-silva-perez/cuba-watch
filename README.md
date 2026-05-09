@@ -90,6 +90,26 @@ docker compose up --build
 
 The application will be available at `http://localhost:8080`.
 
+### Vercel (Serverless)
+
+Cuba Watch can be deployed to Vercel as a serverless application. On Vercel, the app runs in demo mode by default (no background scheduler) and serves the static dashboard from `public/` while API routes are handled by a Python serverless function.
+
+1. Install the Vercel CLI:
+   ```bash
+   npm i -g vercel
+   ```
+
+2. Deploy:
+   ```bash
+   vercel --prod
+   ```
+
+3. Configure environment variables in the Vercel dashboard if needed:
+   - `CUBA_WATCH_DEMO_MODE` — `true` (default on Vercel) uses seeded sample data; `false` initializes an empty ephemeral database.
+   - `CUBA_WATCH_DB_PATH` — Path to the SQLite database. Defaults to `/tmp/cuba_monitor.db` on Vercel (ephemeral, cleared on cold starts).
+
+> **Note:** Vercel serverless functions are stateless and ephemeral. Live scraping with the background scheduler is disabled. For persistent data on Vercel, connect a serverless database (e.g., Vercel Postgres, Neon, or Supabase) and update `src/database.py` accordingly.
+
 ## API Endpoints
 
 | Endpoint | Method | Description |
