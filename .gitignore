@@ -22,3 +22,7 @@ __pycache__/
 .idea/
 .vscode/
 .vercel
+
+# Browser automation temp files
+.playwright-mcp/
+*.log
